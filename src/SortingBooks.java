@@ -27,7 +27,7 @@ public class SortingBooks {
      */
     public static void do_part1() {
 
-        //display welcome message
+        //Print the welcome message
         System.out.print("Welcome to the Book Sorting Program by Sonali Patel!\n");
 
         //declare Scanner object and PrintWriter objects that will read from the input file and write in the syntax error file, respectively
@@ -60,7 +60,7 @@ public class SortingBooks {
 
             fileCount++; //increment after each iteration
             String fileName = fileScanner.nextLine(); //file name to be read next
-            Scanner recordScanner = null; //declare new Scanner object to read data in the book files
+            Scanner recordScanner; //declare new Scanner object to read data in the book files
 
             try {
                 recordScanner = new Scanner(new FileInputStream(fileName));
@@ -122,13 +122,7 @@ public class SortingBooks {
                     } else if (title.equals(" ") || authors.equals(" ") || price.equals(" ") || isbn.equals(" ") || genre.equals(" ") || year.equals(" ")) {
                         throw new MissingFieldException("Error: Missing Field");
                     }
-                } catch (TooManyFieldsException e) {
-                    e.getMessage();
-                } catch (TooFewFieldsException e) {
-                    e.getMessage();
-                } catch (UnknownGenreException e) {
-                    e.getMessage();
-                } catch (MissingFieldException e) {
+                } catch (TooManyFieldsException | TooFewFieldsException | UnknownGenreException | MissingFieldException e) {
                     e.getMessage();
                 }
 
@@ -158,6 +152,7 @@ public class SortingBooks {
                     PrintWriter genreFileWriter = null;
 
                     //switch statement to send each record to its appropriate location
+                    String x = title + "," + authors + "," + price + "," + isbn + "," + genre + "," + year;
                     switch (genre) {
 
                         case "CCB":
@@ -165,9 +160,9 @@ public class SortingBooks {
                             try {
                                 genreFileWriter = new PrintWriter(new FileOutputStream("Cartoons_Comics_Books.csv.txt", true));
                             } catch (FileNotFoundException e) {
-                                e.printStackTrace();
+                                System.out.println("File not found: " + e.getMessage());
                             }
-                            genreFileWriter.println(title + "," + authors + "," + price + "," + isbn + "," + genre + "," + year);
+                            genreFileWriter.println(x);
                             genreFileWriter.flush();
                             genreFileWriter.close();
                             break;
@@ -177,9 +172,9 @@ public class SortingBooks {
                             try {
                                 genreFileWriter = new PrintWriter(new FileOutputStream("Hobbies_Collectibles_Books.csv.txt", true));
                             } catch (FileNotFoundException e) {
-                                e.printStackTrace();
+                                System.out.println("File not found: " + e.getMessage());
                             }
-                            genreFileWriter.println(title + "," + authors + "," + price + "," + isbn + "," + genre + "," + year);
+                            genreFileWriter.println(x);
                             genreFileWriter.flush();
                             genreFileWriter.close();
                             break;
@@ -189,9 +184,9 @@ public class SortingBooks {
                             try {
                                 genreFileWriter = new PrintWriter(new FileOutputStream("Movies_TV.csv.txt", true));
                             } catch (FileNotFoundException e) {
-                                e.printStackTrace();
+                                System.out.println("File not found: " + e.getMessage());
                             }
-                            genreFileWriter.println(title + "," + authors + "," + price + "," + isbn + "," + genre + "," + year);
+                            genreFileWriter.println(x);
                             genreFileWriter.flush();
                             genreFileWriter.close();
                             break;
@@ -201,9 +196,9 @@ public class SortingBooks {
                             try {
                                 genreFileWriter = new PrintWriter(new FileOutputStream("Music_Radio_Books.csv.txt", true));
                             } catch (FileNotFoundException e) {
-                                e.printStackTrace();
+                                System.out.println("File not found: " + e.getMessage());
                             }
-                            genreFileWriter.println(title + "," + authors + "," + price + "," + isbn + "," + genre + "," + year);
+                            genreFileWriter.println(x);
                             genreFileWriter.flush();
                             genreFileWriter.close();
                             break;
@@ -213,9 +208,9 @@ public class SortingBooks {
                             try {
                                 genreFileWriter = new PrintWriter(new FileOutputStream("Nostalgia_Eclectic_Books.csv.txt", true));
                             } catch (FileNotFoundException e) {
-                                e.printStackTrace();
+                                System.out.println("File not found: " + e.getMessage());
                             }
-                            genreFileWriter.println(title + "," + authors + "," + price + "," + isbn + "," + genre + "," + year);
+                            genreFileWriter.println(x);
                             genreFileWriter.flush();
                             genreFileWriter.close();
                             break;
@@ -225,9 +220,9 @@ public class SortingBooks {
                             try {
                                 genreFileWriter = new PrintWriter(new FileOutputStream("Old_Time_Radio.csv.txt", true));
                             } catch (FileNotFoundException e) {
-                                e.printStackTrace();
+                                System.out.println("File not found: " + e.getMessage());
                             }
-                            genreFileWriter.println(title + "," + authors + "," + price + "," + isbn + "," + genre + "," + year);
+                            genreFileWriter.println(x);
                             genreFileWriter.flush();
                             genreFileWriter.close();
                             break;
@@ -237,9 +232,9 @@ public class SortingBooks {
                             try {
                                 genreFileWriter = new PrintWriter(new FileOutputStream("Sports_Sports_Memorabilia.csv.txt", true));
                             } catch (FileNotFoundException e) {
-                                e.printStackTrace();
+                                System.out.println("File not found: " + e.getMessage());
                             }
-                            genreFileWriter.println(title + "," + authors + "," + price + "," + isbn + "," + genre + "," + year);
+                            genreFileWriter.println(x);
                             genreFileWriter.flush();
                             genreFileWriter.close();
                             break;
@@ -249,9 +244,9 @@ public class SortingBooks {
                             try {
                                 genreFileWriter = new PrintWriter(new FileOutputStream("Trains_Planes_Automobiles.csv.txt", true));
                             } catch (FileNotFoundException e) {
-                                e.printStackTrace();
+                                System.out.println("File not found: " + e.getMessage());
                             }
-                            genreFileWriter.println(title + "," + authors + "," + price + "," + isbn + "," + genre + "," + year);
+                            genreFileWriter.println(x);
                             genreFileWriter.flush();
                             genreFileWriter.close();
                             break;
@@ -422,7 +417,7 @@ public class SortingBooks {
                                 try {
                                     genreFileWriter = new PrintWriter(new FileOutputStream("CartoonsComics.csv.txt", true));
                                 } catch (FileNotFoundException e) {
-                                    e.getMessage();
+                                    System.out.println("File not found: " + e.getMessage());
                                 }
                                 CCBbookArray[ccb] = newBook;
                                 genreFileWriter.println(CCBbookArray[ccb]);
@@ -435,7 +430,7 @@ public class SortingBooks {
                                 try {
                                     genreFileWriter = new PrintWriter(new FileOutputStream("HobbiesCollectibles.csv.txt", true));
                                 } catch (FileNotFoundException e) {
-                                    e.getMessage();
+                                    System.out.println("File not found: " + e.getMessage());
                                 }
                                 HCBbookArray[hcb] = newBook;
                                 genreFileWriter.println(HCBbookArray[hcb]);
@@ -448,7 +443,7 @@ public class SortingBooks {
                                 try {
                                     genreFileWriter = new PrintWriter(new FileOutputStream("MoviesTV.csv.txt", true));
                                 } catch (FileNotFoundException e) {
-                                    e.getMessage();
+                                    System.out.println("File not found: " + e.getMessage());
                                 }
                                 MTVbookArray[mtv] = newBook;
                                 genreFileWriter.println(MTVbookArray[mtv]);
@@ -461,7 +456,7 @@ public class SortingBooks {
                                 try {
                                     genreFileWriter = new PrintWriter(new FileOutputStream("MusicRadioBooks.csv.txt", true));
                                 } catch (FileNotFoundException e) {
-                                    e.getMessage();
+                                    System.out.println("File not found: " + e.getMessage());
                                 }
                                 MRBbookArray[mrb] = newBook;
                                 genreFileWriter.println(MRBbookArray[mrb]);
@@ -474,7 +469,7 @@ public class SortingBooks {
                                 try {
                                     genreFileWriter = new PrintWriter(new FileOutputStream("NostalgiaEclecticBooks.csv.txt", true));
                                 } catch (FileNotFoundException e) {
-                                    e.getMessage();
+                                    System.out.println("File not found: " + e.getMessage());
                                 }
                                 NEBbookArray[neb] = newBook;
                                 genreFileWriter.println(NEBbookArray[neb]);
@@ -487,7 +482,7 @@ public class SortingBooks {
                                 try {
                                     genreFileWriter = new PrintWriter(new FileOutputStream("OldTimeRadio.csv.txt", true));
                                 } catch (FileNotFoundException e) {
-                                    e.getMessage();
+                                    System.out.println("File not found: " + e.getMessage());
                                 }
                                 OTRbookArray[otr] = newBook;
                                 genreFileWriter.println(OTRbookArray[otr]);
@@ -500,7 +495,7 @@ public class SortingBooks {
                                 try {
                                     genreFileWriter = new PrintWriter(new FileOutputStream("SportsSportsMemorabilia.csv.txt", true));
                                 } catch (FileNotFoundException e) {
-                                    e.getMessage();
+                                    System.out.println("File not found: " + e.getMessage());
                                 }
                                 SSMbookArray[ssm] = newBook;
                                 genreFileWriter.println(SSMbookArray[ssm]);
@@ -513,7 +508,7 @@ public class SortingBooks {
                                 try {
                                     genreFileWriter = new PrintWriter(new FileOutputStream("TrainsPlanesAutomobiles.csv.txt", true));
                                 } catch (FileNotFoundException e) {
-                                    e.getMessage();
+                                    System.out.println("File not found: " + e.getMessage());
                                 }
                                 TPAbookArray[tpa] = newBook;
                                 genreFileWriter.println(TPAbookArray[tpa]);
@@ -523,13 +518,7 @@ public class SortingBooks {
                                 break;
                         }
                     }
-                } catch (BadIsbn10Exception e) {
-                    e.getMessage();
-                } catch (BadIsbn13Exception e) {
-                    e.getMessage();
-                } catch (BadPriceException e) {
-                    e.getMessage();
-                } catch (BadYearException e) {
+                } catch (BadIsbn10Exception | BadIsbn13Exception | BadPriceException | BadYearException e) {
                     e.getMessage();
                 }
             }
@@ -568,7 +557,7 @@ public class SortingBooks {
             serialize(SSMbookArray, "Sports_Sports_Memorabilia.csv.ser");
             serialize(TPAbookArray, "Trains_Planes_Automobiles.csv.ser");
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("IO Exception found:  " + e.getMessage());
         }
     }
 
@@ -627,10 +616,7 @@ public class SortingBooks {
      * @return true if the price is non-negative, false otherwise
      */
     public static boolean isValidPrice(double price) {
-        if (price >= 0)
-            return true;
-        else
-            return false;
+        return price >= 0;
     }
 
     /**
@@ -1024,18 +1010,17 @@ public class SortingBooks {
      */
     public static Book[] removeEmptyCells(Book[] array) {
         int count = 0;
-        for (int i = 0; i < array.length; i++) {
-            if (!(array[i] == null))
+        for (Book value : array) {
+            if (!(value == null))
                 count++;
         }
 
         Book[] newArray = new Book[count];
         int j = 0;
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] == null)
-                continue;
-            else {
-                newArray[j] = array[i];
+        for (Book book : array) {
+            if (book == null) {
+            } else {
+                newArray[j] = book;
                 j++;
             }
         }
