@@ -4,7 +4,7 @@ import java.lang.ArrayIndexOutOfBoundsException;
 
 public class SortingBooks {
 
-    //these attributes contain the amount of syntactically valid books of each genre as they are used in 2 seperate methods
+    // Static variable to keep same count through the program
     private static int CCBcountCopy;
     private static int HCBcountCopy;
     private static int MTVcountCopy;
@@ -264,7 +264,7 @@ public class SortingBooks {
             recordScanner.close();
         }
 
-        //display results
+        //Will show the results
         pw.println("\nThere are " + tooManyFieldsCount + " records with too many fields."
                 + "\nThere are " + tooFewFieldsCount + " records with too few fields."
                 + "\nThere are " + missingFieldCount + " records with one or more missing fields."
@@ -320,7 +320,7 @@ public class SortingBooks {
         int isbn10ErrorCount = 0, isbn13ErrorCount = 0, priceErrorCount = 0, yearErrorCount = 0;
         int ccb = 0, hcb = 0, mtv = 0, mrb = 0, neb = 0, otr = 0, ssm = 0, tpa = 0;
 
-        System.out.println(CCBcountCopy+" "+HCBcountCopy+" "+MTVcountCopy+" "+MRBcountCopy+" "+NEBcountCopy+" "+OTRcountCopy+" "+SSMcountCopy+" "+TPAcountCopy);
+
 
 
         //create Book arrays for each genre where length = number of syntactically valid records
@@ -347,7 +347,7 @@ public class SortingBooks {
                 System.out.println("Error: File not found." + fileName);
             }
 
-            //while loop to keep going until the file has no other line
+            // Process each line/record in the file
             while (recordScanner.hasNextLine()) {
 
                 String record = recordScanner.nextLine();
@@ -361,6 +361,7 @@ public class SortingBooks {
                     record = record.substring(record.indexOf(',', 2));
                 }
 
+                // Parse authors, price, ISBN, genre, and year from the record
                 authors = record.substring(record.indexOf(',') + 1, record.indexOf(',', 2));
                 record = record.substring(record.indexOf(',', 2));
                 price = Double.parseDouble(record.substring(1, record.indexOf(',', 2)));
@@ -371,7 +372,7 @@ public class SortingBooks {
                 record = record.substring(record.indexOf(',', 2));
                 year = Integer.parseInt(record.substring(1));
 
-                //check for errors and write them in the semantic error file
+                // Validate record fields and log errors if found
                 try {
                     if (!isValidISBN(isbn)) {
                         pw.println("\nsemantic error in file: " + fileName
@@ -404,13 +405,13 @@ public class SortingBooks {
                         pw.flush();
                         throw new BadYearException("Error: This record's year of publication is invalid.");
                     } else {
-                        //construct new Book object and call the parametrized constructor
+                        // Create a new Book object if the record is valid
                         Book newBook = new Book(title, authors, price, isbn, genre, year);
 
-                        //declare new print writer object that will write the valid book records in each respective plain text file
+                        // Initialize PrintWriter for writing to genre-specific files
                         PrintWriter genreFileWriter = null;
 
-                        //switch statement to send each record to its appropriate location
+                        // Assign valid records to their respective genre arrays and files
                         switch (newBook.getGenre()) {
 
                             case "CCB":
@@ -525,7 +526,7 @@ public class SortingBooks {
             recordScanner.close();
         }
 
-        //display the results
+        // Display summary of semantic errors
         pw.println("\nThere are " + isbn10ErrorCount + " records with an invalid ISBN-10."
                 + "\nThere are " + isbn13ErrorCount + " records with an invalid ISBN-13."
                 + "\nThere are " + priceErrorCount + " records with an invalid price."
@@ -562,17 +563,14 @@ public class SortingBooks {
     }
 
     /**
-     * This method determines whether a given ISBN is valid according to its checksum formula.
-     * An ISBN must be either 10 digits (for an ISBN-10) or 13 digits (for an ISBN-13).
-     * <p>
-     * For an ISBN-10, the checksum formula is:
+     * This method checks whether an ISBN is valid based on its checksum formula.
+     * An ISBN can be either 10 digits (ISBN-10) or 13 digits (ISBN-13).
+     * The checksum for an ISBN-10 is calculated using the formula:
      * (10x1 + 9x2 + 8x3 + 7x4 + 6x5 + 5x6 + 4x7 + 3x8 + 2x9 + 1x10) % 11 == 0
-     * <p>
-     * For an ISBN-13, the checksum formula is:
+     * The checksum for an ISBN-13 is calculated using the formula:
      * (x1 + 3x2 + x3 + 3x4 + x5 + 3x6 + x7 + 3x8 + x9 + 3x10 + x11 + 3x12 + x13) % 10 == 0
-     *
-     * @param isbn the ISBN to be validated, as a String
-     * @return true if the ISBN is valid, false otherwise
+     * @param isbn the ISBN string to validate
+     * @return true if the ISBN is valid; false otherwise
      */
     public static boolean isValidISBN(String isbn) {
 
@@ -665,17 +663,19 @@ public class SortingBooks {
 
         Scanner fileScanner = null;
 
+        // Attempt to open the file that contains the list of serialized file names
         try {
             fileScanner = new Scanner(new FileInputStream("part3_input_file_names.txt"));
         } catch (FileNotFoundException e) {
             System.out.println("Error: File not found.");
         }
 
+        // Read the number of files listed in the input file
         int numFiles = fileScanner.nextInt(); //read user input
         fileScanner.nextLine(); //skip to next line
         int fileCount = 0;
 
-        //declare each array to store info from deserialized binary files
+        // Declare arrays to store the deserialized Book objects for each file
         Book[] CCBarray = null;
         Book[] HCBarray = null;
         Book[] MTVarray = null;
@@ -685,7 +685,7 @@ public class SortingBooks {
         Book[] SSMarray = null;
         Book[] TPAarray = null;
 
-        //create shortcuts for each serialized file name
+        // Define the file names as string variables for easy reference
         String ccb = "Cartoons_Comics.csv.ser";
         String hcb = "Hobbies_Collectibles.csv.ser";
         String mtv = "Movies_TV_Books.csv.ser";
@@ -698,9 +698,9 @@ public class SortingBooks {
         //while loop to go through each line of the input file
         while (fileCount < numFiles) {
 
-            String fileName = fileScanner.nextLine(); //read file name
+            String fileName = fileScanner.nextLine();
 
-            //switch statement to deserialize each file one-by-one and store the information in the appropriate array
+            // Switch statement to deserialize each file one-by-one and store the information in the appropriate array
             switch (fileName) {
 
                 case "Cartoons_Comics.csv.ser":
@@ -763,12 +763,12 @@ public class SortingBooks {
             fileCount++; //increment at each iteration
         }
 
-        String selectedFile = ccb; //default file
+        String selectedFile = ccb; // Default file
 
-        Scanner keyboard = new Scanner(System.in); //new Scanner object that reads user input
+        Scanner keyboard = new Scanner(System.in); // New Scanner object that reads user input
         String userInput = null;
 
-        //do-while loop that keeps going until user decides to exit
+        // Do-while loop allows the code to run until user enters x or X
         do {
             System.out.print("\n\n---------------------------------"
                     + "\n            Main Menu"
@@ -828,9 +828,10 @@ public class SortingBooks {
                         + "\n"
                         + "\nEnter Your Choice: ");
 
-                //read user's choice
+                // Read user's choice
                 int input = keyboard.nextInt();
 
+                // Selects genre based on user input
                 if (input == 1) {
                     selectedFile = ccb;
                 } else if (input == 2) {
@@ -857,23 +858,24 @@ public class SortingBooks {
             if (userInput.equals("v")) { //if user enters 'v', display the following message
                 System.out.println("viewing " + selectedFile + " (" + length + " records)");
 
-                //prompt user to enter the value of 'n' (positive or negative)
+                // Prompt the user to enter how many records they wish to display and the starting index
                 System.out.print("\nPlease enter how many consecutive records you wish to display: ");
                 int n = keyboard.nextInt();
 
-                //prompt user to enter the index of the first record they wish to see
                 System.out.print("\nNow, enter the index of the record you want to start from: ");
                 int index = keyboard.nextInt();
 
-                if (n == 0) { //if n = 0, end iteration
+                // Handle positive or negative values of 'n'
+                if (n == 0) { // If n is 0, skip the display process
 
                 } else if (n > 0) {
                     try {
+                        // Any if statement that will trigger, it will print the records inside the array.
                         if (selectedFile.equals(ccb)) {
                             for (int i = 0; i < n; i++, index++) {
                                 System.out.println(CCBarray[index - 1]);
-                                if (index == 21) { //if index exceeds the last element of the array, display the EOF message
-                                    throw new EOFException();
+                                if (index == 21) {
+                                    throw new EOFException(); // Will display EOF message if index = 21
                                 }
                             }
                         } else if (selectedFile.equals(hcb)) {
@@ -969,19 +971,13 @@ public class SortingBooks {
         fileScanner.close();
     }
 
-    /**
-     * Deserializes an array of Book objects from a binary file.
-     *
-     * @param fileName the name of the file from which the Book objects will be deserialized
-     * @return an array of deserialized Book objects
-     * @throws IOException if an I/O error occurs while reading from the file
-     */
+    //Deserialization from binary file
     public static Book[] deserialize(String fileName) throws IOException {
         File file = new File(fileName);
         FileInputStream fis = new FileInputStream(file);
         ObjectInputStream ois = new ObjectInputStream(fis);
 
-        //read integer on the first line that says how many lines this file contains
+        //It will read the binary file and then create an array of that length
         int length = ois.readInt();
 
         Book[] array = new Book[length];
@@ -1002,12 +998,7 @@ public class SortingBooks {
         return array;
     }
 
-    /**
-     * Removes any empty cells from the given Book array and returns a new array without the empty cells.
-     *
-     * @param array the Book array to remove empty cells from
-     * @return a new Book array without empty cells
-     */
+    // Removes empty cells from Book array
     public static Book[] removeEmptyCells(Book[] array) {
         int count = 0;
         for (Book value : array) {
