@@ -1,0 +1,9 @@
+8
+Cartoons_Comics.csv.ser
+Hobbies_Collectibles.csv.ser
+Movies_TV_Books.csv.ser
+Music_Radio_Books.csv.ser
+Nostalgia_Eclectic_Books.csv.ser
+Old_Time_Radio_Books.csv.ser
+Sports_Sports_Memorabilia.csv.ser
+Trains_Planes_Automobiles.csv.ser
