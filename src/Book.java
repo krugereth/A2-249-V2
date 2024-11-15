@@ -1,3 +1,8 @@
+//-----------------------------------------------------
+//Assignment 3
+//Written by: Ayush Patel (40285846) and Krishna Patel (40200870)
+//-----------------------------------------------------
+
 import java.io.Serializable;
 
 public class Book implements Serializable{
@@ -9,10 +14,12 @@ public class Book implements Serializable{
     private String genre;
     private int year;
 
+    //Default constructor
     public Book() {
 
     }
 
+    //Parameterized constructor
     public Book(String title, String authors, double price, String isbn, String genre, int year) {
         this.title = title;
         this.authors = authors;
@@ -22,6 +29,7 @@ public class Book implements Serializable{
         this.year = year;
     }
 
+    //Getter and setter methods for the attributes are declared
     public String getTitle() {
         return title;
     }
@@ -70,6 +78,7 @@ public class Book implements Serializable{
         this.year = year;
     }
 
+    //Equals method is declared
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -112,6 +121,7 @@ public class Book implements Serializable{
         return true;
     }
 
+    //toString method is declared
     public String toString() {
         return title + "," + authors + "," + price + "," + isbn + "," + genre + "," + year;
     }

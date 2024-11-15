@@ -1,10 +1,20 @@
+/**
+ * BookSorter class that performs part 1, part 2 and part 3 methods as instructed
+ * Assignment 3
+ * Written by: Ayush Patel (40285846) and Krishna Patel (40200870)
+ *
+ * This program is a book sorting program that reads a bunch of files storing information about books, identifies the different attributes of
+ * the book records (title, authors, price, isbn, genre and year) and separates the syntactically and semantically correct records by genre.
+ * This program also allows the user to navigate through the records and view them as the invalid ones were already removed.
+ */
+
 import java.io.*;
 import java.util.Scanner;
 import java.lang.ArrayIndexOutOfBoundsException;
 
-public class SortingBooks {
+public class BookSorter {
 
-    // Static variable to keep same count through the program
+    // Static variables are declared to keep same count through the program
     private static int CCBcountCopy;
     private static int HCBcountCopy;
     private static int MTVcountCopy;
@@ -15,48 +25,49 @@ public class SortingBooks {
     private static int TPAcountCopy;
 
     public static void main(String[] args) {
-        do_part1(); // validating syntax, partition book records based on genre.
-        do_part2(); // validating semantics, read the genre files each into arrays of Book objects,
-        // then serialize the arrays of Book objects each into binary files
-        do_part3(); // reading the binary files, deserialize the array objects in each file, and
-        // then provide an interacive program to allow the user to navigate the arrays.
+
+        //Each part methods are called
+        do_part1();
+        do_part2();
+        do_part3();
+
     }
 
     /**
-     * This method is in charge of validating syntax and the partition of book records based on genre.
+     * * This method is responsible for validating syntax and partitioning book records based on genre.
      */
     public static void do_part1() {
 
         //Print the welcome message
-        System.out.print("Welcome to the Book Sorting Program by Sonali Patel!\n");
+        System.out.print("Welcome to the Concordia Book Sorting Program! \n");
 
         //declare Scanner object and PrintWriter objects that will read from the input file and write in the syntax error file, respectively
         Scanner fileScanner = null;
         PrintWriter pw = null;
 
-        //instanciate both objects
+        //Open and create the txt files and catch any errors in the try catch block
         try {
             fileScanner = new Scanner(new FileInputStream("part1_input_file_names.txt"));
             pw = new PrintWriter(new FileOutputStream("syntax_error_file.txt", true));
 
         } catch (FileNotFoundException e) {
-            System.out.println("Error: File not found: ");
+            System.out.println("Error has been found: File not found: ");
             System.exit(0); //terminate
         }
 
-        int fileCount = 0; //number of files that will be scanned
-        int numFiles = fileScanner.nextInt(); //read the integer at the first line of the file = number of files
-        fileScanner.nextLine(); //go to next line
+        int fileCount = 0; // number of files that will be scanned
+        int numberOfFiles = fileScanner.nextInt(); //read the integer at the first line of the file = number of files
+        fileScanner.nextLine();
 
-        //count the occurence of each syntax error and each syntactically valid record
+        //The count of syntax and semantic errors
         int invalidGenreCount = 0, tooManyFieldsCount = 0, tooFewFieldsCount = 0, missingFieldCount = 0;
         int CCBcount = 0, HCBcount = 0, MTVcount = 0, MRBcount = 0, NEBcount = 0, OTRcount = 0, SSMcount = 0, TPAcount = 0;
 
-        //declare each field type
+        //Field types are declared
         String title, authors, price, isbn, genre, year;
 
         //while loop to go through each line of the input file
-        while (fileCount < numFiles) {
+        while (fileCount < numberOfFiles) {
 
             fileCount++; //increment after each iteration
             String fileName = fileScanner.nextLine(); //file name to be read next
@@ -65,7 +76,7 @@ public class SortingBooks {
             try {
                 recordScanner = new Scanner(new FileInputStream(fileName));
             } catch (FileNotFoundException e) {
-                System.out.println("Error: Record File not found: " + fileName);
+                System.out.println("File not found: " + fileName);
                continue;
             }
 
@@ -73,7 +84,7 @@ public class SortingBooks {
             while (recordScanner.hasNextLine()) {
 
                 String record = recordScanner.nextLine(); //read the record
-                String originalRecord = record; //store the whole line for futur purposes
+                String originalRecord = record; //store the whole line for use after
 
                 //read the title of each record (with or without " ")
                 if (record.charAt(0) == '"') {
@@ -84,7 +95,7 @@ public class SortingBooks {
                     record = record.substring(record.indexOf(',', 2));
                 }
 
-                //read the other fields of the record
+                //read the other fields of the record using substring
                 authors = record.substring(record.indexOf(",") + 1, record.indexOf(',', 2));
                 record = record.substring(record.indexOf(',', 2));
                 price = record.substring(record.indexOf(',') + 1, record.indexOf(',', 2));
@@ -111,6 +122,7 @@ public class SortingBooks {
 
                 int numFields = charCount + 1;
 
+                //If else statement to parse through the different type of errors in a try catch block
                 try {
                     if (numFields > 6) {
                         throw new TooManyFieldsException("Error: Too Many Fields");
@@ -126,6 +138,7 @@ public class SortingBooks {
                     e.getMessage();
                 }
 
+                //If else statements to write the error type in the txt files
                 if (title.equals(" ") || authors.equals(" ") || price.equals(" ") || isbn.equals(" ") || genre.equals(" ") || year.equals(" ") || year.isEmpty()) {
                     missingFieldCount++;
                     pw.println("\nsyntax error in file: " + fileName
@@ -148,11 +161,13 @@ public class SortingBooks {
                             + "\nRecord: " + originalRecord);
                     pw.flush();
                 } else {
-                    //print writer object that will write in each genre's file
+
                     PrintWriter genreFileWriter = null;
 
-                    //switch statement to send each record to its appropriate location
+                    //String x declared for clearer code
                     String x = title + "," + authors + "," + price + "," + isbn + "," + genre + "," + year;
+
+                    //switch case statement to send each record to its appropriate location based on genre
                     switch (genre) {
 
                         case "CCB":
@@ -264,7 +279,7 @@ public class SortingBooks {
             recordScanner.close();
         }
 
-        //Will show the results
+        //Prints the results
         pw.println("\nThere are " + tooManyFieldsCount + " records with too many fields."
                 + "\nThere are " + tooFewFieldsCount + " records with too few fields."
                 + "\nThere are " + missingFieldCount + " records with one or more missing fields."
@@ -277,7 +292,7 @@ public class SortingBooks {
         pw.close();
         fileScanner.close();
 
-        //assign values to the static properties
+        //Assign the count values
         CCBcountCopy = CCBcount;
         HCBcountCopy = HCBcount;
         MTVcountCopy = MTVcount;
@@ -289,12 +304,12 @@ public class SortingBooks {
     }
 
     /**
-     * This method is in charge of validating semantics, reading the genre files each into arrays of Book objects,
-     * then serialize the arrays of Book objects each into binary files
+     * This method is responsible for validating semantics, loading each genre file into arrays of Book objects,
+     * and then serializing each array of Book objects into binary files.
      */
     public static void do_part2() {
 
-        //declare Scanner object and PrintWriter objects that will read from the input file and write in the syntax error file, respectively
+        // Declare a Scanner object for reading from the input file and PrintWriter objects for writing to the syntax error file.
         PrintWriter pw = null;
         Scanner fileScanner = null;
 
@@ -304,26 +319,24 @@ public class SortingBooks {
             pw = new PrintWriter(new FileOutputStream("semantic_error_file.txt",true));
 
         } catch (FileNotFoundException e) {
-            System.out.println("Error: File not found: ");
+            System.out.println("File not found. The program will now terminate. ");
             System.exit(0); //terminate
         }
 
-        int fileCount = 0; //number of files that will be scanned
-        int numFiles = fileScanner.nextInt(); //read the integer at the first line of the file
-        fileScanner.nextLine(); //go to next line
+        int fileCount = 0;
+        int numFiles = fileScanner.nextInt();
+        fileScanner.nextLine(); // Goes to next line
 
         String title, authors, isbn, genre;
         double price;
         int year;
 
-        //count the number of semantic errors and the number of valid book records
+        // Track the count of semantic errors and the number of valid book records.
         int isbn10ErrorCount = 0, isbn13ErrorCount = 0, priceErrorCount = 0, yearErrorCount = 0;
         int ccb = 0, hcb = 0, mtv = 0, mrb = 0, neb = 0, otr = 0, ssm = 0, tpa = 0;
 
 
-
-
-        //create Book arrays for each genre where length = number of syntactically valid records
+        // Create Book arrays for each genre with a length equal to the number of syntactically valid records.
         Book[] CCBbookArray = new Book[CCBcountCopy];
         Book[] HCBbookArray = new Book[HCBcountCopy];
         Book[] MTVbookArray = new Book[MTVcountCopy];
@@ -333,10 +346,10 @@ public class SortingBooks {
         Book[] SSMbookArray = new Book[SSMcountCopy];
         Book[] TPAbookArray = new Book[TPAcountCopy];
 
-        //while loop to go through each line of the input file
+        // Use a while loop to iterate through each line of the input file.
         while (fileCount < numFiles) {
 
-            fileCount++; //increment at each iteration
+            fileCount++;
 
             String fileName = fileScanner.nextLine();
             Scanner recordScanner = null;
@@ -344,7 +357,7 @@ public class SortingBooks {
             try {
                 recordScanner = new Scanner(new FileInputStream(fileName));
             } catch (FileNotFoundException e) {
-                System.out.println("Error: File not found." + fileName);
+                System.out.println("File not found:  " + fileName);
             }
 
             // Process each line/record in the file
@@ -382,11 +395,11 @@ public class SortingBooks {
                         pw.flush();
                         if (isbn.length() == 10) {
                             isbn10ErrorCount++;
-                            throw new BadIsbn10Exception("Error: This record's ISBN is invalid.");
+                            throw new BadISBN10Exception("Error: This record's ISBN is invalid.");
                         }
                         if (isbn.length() == 13) {
                             isbn13ErrorCount++;
-                            throw new BadIsbn13Exception("Error: This record's ISBN is invalid.");
+                            throw new BadISBN13Exception("Error: This record's ISBN is invalid.");
                         }
                     } else if (!isValidPrice(price)) {
                         pw.println("\nsemantic error in file: " + fileName
@@ -519,7 +532,7 @@ public class SortingBooks {
                                 break;
                         }
                     }
-                } catch (BadIsbn10Exception | BadIsbn13Exception | BadPriceException | BadYearException e) {
+                } catch (BadISBN10Exception | BadISBN13Exception | BadPriceException | BadYearException e) {
                     e.getMessage();
                 }
             }
@@ -563,14 +576,13 @@ public class SortingBooks {
     }
 
     /**
-     * This method checks whether an ISBN is valid based on its checksum formula.
-     * An ISBN can be either 10 digits (ISBN-10) or 13 digits (ISBN-13).
-     * The checksum for an ISBN-10 is calculated using the formula:
-     * (10x1 + 9x2 + 8x3 + 7x4 + 6x5 + 5x6 + 4x7 + 3x8 + 2x9 + 1x10) % 11 == 0
-     * The checksum for an ISBN-13 is calculated using the formula:
-     * (x1 + 3x2 + x3 + 3x4 + x5 + 3x6 + x7 + 3x8 + x9 + 3x10 + x11 + 3x12 + x13) % 10 == 0
-     * @param isbn the ISBN string to validate
-     * @return true if the ISBN is valid; false otherwise
+      * This method validates an ISBN based on its checksum formula.
+      * An ISBN can be either 10 digits (ISBN-10) or 13 digits (ISBN-13).
+      * For ISBN-10, the checksum is calculated using the formula:
+      * (10x1 + 9x2 + 8x3 + 7x4 + 6x5 + 5x6 + 4x7 + 3x8 + 2x9 + 1x10) % 11 == 0 * For ISBN-13, the checksum is calculated using the formula:
+      * (x1 + 3x2 + x3 + 3x4 + x5 + 3x6 + x7 + 3x8 + x9 + 3x10 + x11 + 3x12 + x13) % 10 == 0
+      * @param isbn the ISBN string to validate
+      * @return true if the ISBN is valid; false otherwise
      */
     public static boolean isValidISBN(String isbn) {
 
@@ -630,12 +642,10 @@ public class SortingBooks {
             return true;
     }
 
-    /**
-     * Serializes an array of Book objects to a file.
-     *
-     * @param array    the array of Book objects to be serialized
-     * @param fileName the name of the file to which the Book objects will be serialized
-     * @throws IOException if an I/O error occurs while writing to the file
+    /** * Serializes an array of Book objects into a file.
+     * @param array the array of Book objects to serialize
+     * @param fileName the name of the file where the Book objects will be saved
+     * @throws IOException if an error occurs during the file writing process
      */
     public static void serialize(Book[] array, String fileName) throws IOException {
         File file = new File(fileName);
@@ -667,7 +677,7 @@ public class SortingBooks {
         try {
             fileScanner = new Scanner(new FileInputStream("part3_input_file_names.txt"));
         } catch (FileNotFoundException e) {
-            System.out.println("Error: File not found.");
+            System.out.println("File not found: " + e.getMessage());
         }
 
         // Read the number of files listed in the input file
@@ -707,63 +717,63 @@ public class SortingBooks {
                     try {
                         CCBarray = deserialize(fileName);
                     } catch (IOException e) {
-                        System.out.println("Error: File not found.");
+                        System.out.println("IO Exception: " + e.getMessage());
                     }
                     break;
                 case "Hobbies_Collectibles.csv.ser":
                     try {
                         HCBarray = deserialize(fileName);
                     } catch (IOException e) {
-                        System.out.println("Error: File not found.");
+                        System.out.println("IO Exception: " + e.getMessage());
                     }
                     break;
                 case "Movies_TV_Books.csv.ser":
                     try {
                         MTVarray = deserialize(fileName);
                     } catch (IOException e) {
-                        System.out.println("Error: File not found.");
+                        System.out.println("IO Exception: " + e.getMessage());
                     }
                     break;
                 case "Music_Radio_Books.csv.ser":
                     try {
                         MRBarray = deserialize(fileName);
                     } catch (IOException e) {
-                        System.out.println("Error: File not found.");
+                        System.out.println("IO Exception: " + e.getMessage());
                     }
                     break;
                 case "Nostalgia_Eclectic_Books.csv.ser":
                     try {
                         NEBarray = deserialize(fileName);
                     } catch (IOException e) {
-                        System.out.println("Error: File not found.");
+                        System.out.println("IO Exception: " + e.getMessage());
                     }
                     break;
                 case "Old_Time_Radio_Books.csv.ser":
                     try {
                         OTRarray = deserialize(fileName);
                     } catch (IOException e) {
-                        System.out.println("Error: File not found.");
+                        System.out.println("IO Exception: " + e.getMessage());
                     }
                     break;
                 case "Sports_Sports_Memorabilia.csv.ser":
                     try {
                         SSMarray = deserialize(fileName);
                     } catch (IOException e) {
-                        System.out.println("Error: File not found.");
+                        System.out.println("IO Exception: " + e.getMessage());
                     }
                     break;
                 case "Trains_Planes_Automobiles.csv.ser":
                     try {
                         TPAarray = deserialize(fileName);
                     } catch (IOException e) {
-                        System.out.println("Error: File not found.");
+                        System.out.println("IO Exception: " + e.getMessage());
                     }
                     break;
             }
             fileCount++; //increment at each iteration
         }
 
-        String selectedFile = ccb; // Default file
+        String recordFileSelected = ccb; // Default file
 
         Scanner keyboard = new Scanner(System.in); // New Scanner object that reads user input
         String userInput = null;
@@ -773,7 +783,7 @@ public class SortingBooks {
             System.out.print("\n\n---------------------------------"
                     + "\n            Main Menu"
                     + "\n---------------------------------"
-                    + "\n   v   View the selected file: " + selectedFile
+                    + "\n   v   View the selected file: " + recordFileSelected
                     + "\n   s   Select a file to view"
                     + "\n   x   Exit"
                     + "\n---------------------------------"
@@ -790,80 +800,80 @@ public class SortingBooks {
 
             //set the value of 'length' to the number of records in each array
             int length = 0;
-            if (selectedFile.equals(ccb))
-                length = 21;
-            else if (selectedFile.equals(hcb))
-                length = 33;
-            else if (selectedFile.equals(mtv))
-                length = 695;
-            else if (selectedFile.equals(mrb))
-                length = 463;
-            else if (selectedFile.equals(neb))
-                length = 49;
-            else if (selectedFile.equals(otr))
-                length = 7;
-            else if (selectedFile.equals(ssm))
-                length = 179;
-            else if (selectedFile.equals(tpa))
-                length = 34;
+            if (recordFileSelected.equals(ccb))
+                length = CCBcountCopy;
+            else if (recordFileSelected.equals(hcb))
+                length = HCBcountCopy;
+            else if (recordFileSelected.equals(mtv))
+                length = MTVcountCopy;
+            else if (recordFileSelected.equals(mrb))
+                length = MRBcountCopy;
+            else if (recordFileSelected.equals(neb))
+                length = NEBcountCopy;
+            else if (recordFileSelected.equals(otr))
+                length = OTRcountCopy;
+            else if (recordFileSelected.equals(ssm))
+                length = SSMcountCopy;
+            else if (recordFileSelected.equals(tpa))
+                length = TPAcountCopy;
 
             //terminate if user wishes to
             if (userInput.equals("x") || userInput.equals("X")) {
-                System.out.println("Thank you for using the Book Sorting Program.");
+                System.out.println("Thank you for using the Book Sorting Program. The program will now exit.");
                 System.exit(0);
             } else if (userInput.equals("s")) { //display sub-menu if user enters 's'
                 System.out.print("\n---------------------------------"
                         + "\n          File Sub-Menu"
                         + "\n---------------------------------"
-                        + "\n  1  Cartoons_Comics.csv.ser\t\t(" + 21 + "  records)"
-                        + "\n  2  Hobbies_Collectibles.csv.ser\t(" + 33 + "  records)"
-                        + "\n  3  Movies_TV_Books.csv.ser\t\t(" + 695 + " records)"
-                        + "\n  4  Music_Radio_Books.csv.ser\t\t(" + 463 + " records)"
-                        + "\n  5  Nostalgia_Eclectic_Books.csv.ser\t(" + 49 + "  records)"
-                        + "\n  6  Old_Time_Radio_Books.csv.ser\t(" + 7 + "   records)"
-                        + "\n  7  Sports_Sports_Memorabilia.csv.ser\t(" + 179 + " records)"
-                        + "\n  8  Trains_Planes_Automobiles.csv.ser\t(" + 34 + "  records)"
+                        + "\n  1  Cartoons_Comics.csv.ser\t\t(" + CCBcountCopy + " records)"
+                        + "\n  2  Hobbies_Collectibles.csv.ser\t(" + HCBcountCopy + " records)"
+                        + "\n  3  Movies_TV_Books.csv.ser\t\t(" + MTVcountCopy + " records)"
+                        + "\n  4  Music_Radio_Books.csv.ser\t\t(" + MRBcountCopy + " records)"
+                        + "\n  5  Nostalgia_Eclectic_Books.csv.ser\t(" + NEBcountCopy + " records)"
+                        + "\n  6  Old_Time_Radio_Books.csv.ser\t(" + OTRcountCopy + " records)"
+                        + "\n  7  Sports_Sports_Memorabilia.csv.ser\t(" + SSMcountCopy + " records)"
+                        + "\n  8  Trains_Planes_Automobiles.csv.ser\t(" + TPAcountCopy + " records)"
                         + "\n  9  Exit"
                         + "\n---------------------------------"
                         + "\n"
                         + "\nEnter Your Choice: ");
 
                 // Read user's choice
-                int input = keyboard.nextInt();
+                int recordFileInput = keyboard.nextInt();
 
-                // Selects genre based on user input
-                if (input == 1) {
-                    selectedFile = ccb;
-                } else if (input == 2) {
-                    selectedFile = hcb;
-                } else if (input == 3) {
-                    selectedFile = mtv;
-                } else if (input == 4) {
-                    selectedFile = mrb;
-                } else if (input == 5) {
-                    selectedFile = neb;
-                } else if (input == 6) {
-                    selectedFile = otr;
-                } else if (input == 7) {
-                    selectedFile = ssm;
-                } else if (input == 8) {
-                    selectedFile = tpa;
-                } else if (input == 9) {
-                    System.out.println("Thank you for using the Book Sorting Program.");
+                // Selects genre based on user recordFileInput
+                if (recordFileInput == 1) {
+                    recordFileSelected = ccb;
+                } else if (recordFileInput == 2) {
+                    recordFileSelected = hcb;
+                } else if (recordFileInput == 3) {
+                    recordFileSelected = mtv;
+                } else if (recordFileInput == 4) {
+                    recordFileSelected = mrb;
+                } else if (recordFileInput == 5) {
+                    recordFileSelected = neb;
+                } else if (recordFileInput == 6) {
+                    recordFileSelected = otr;
+                } else if (recordFileInput == 7) {
+                    recordFileSelected = ssm;
+                } else if (recordFileInput == 8) {
+                    recordFileSelected = tpa;
+                } else if (recordFileInput == 9) {
+                    System.out.println("Thank you for using our program ! The program will now terminate");
                     System.exit(0);
                 } else {
-                    System.out.println("Invalid Input. Please try again.");
+                    System.out.println("Your input is invalid. Please select the proper number.");
                 }
             }
             if (userInput.equals("v")) { //if user enters 'v', display the following message
-                System.out.println("viewing " + selectedFile + " (" + length + " records)");
+                System.out.println("Now viewing " + recordFileSelected + " (" + length + " records)");
 
-                // Prompt the user to enter how many records they wish to display and the starting index
+                // Prompt the user to enter how many records they wish to display and the starting indexOfRecord
                 System.out.print("\nPlease enter how many consecutive records you wish to display: ");
                 int n = keyboard.nextInt();
 
                 System.out.print("\nNow, enter the index of the record you want to start from: ");
-                int index = keyboard.nextInt();
+                int indexOfRecord = keyboard.nextInt();
 
                 // Handle positive or negative values of 'n'
                 if (n == 0) { // If n is 0, skip the display process
@@ -871,97 +881,97 @@ public class SortingBooks {
                 } else if (n > 0) {
                     try {
                         // Any if statement that will trigger, it will print the records inside the array.
-                        if (selectedFile.equals(ccb)) {
-                            for (int i = 0; i < n; i++, index++) {
-                                System.out.println(CCBarray[index - 1]);
-                                if (index == 21) {
-                                    throw new EOFException(); // Will display EOF message if index = 21
+                        if (recordFileSelected.equals(ccb)) {
+                            for (int i = 0; i < n; i++, indexOfRecord++) {
+                                System.out.println(CCBarray[indexOfRecord - 1]);
+                                if (indexOfRecord == 27) {
+                                    throw new EOFException(); // Will display EOF message if indexOfRecord = 21
                                 }
                             }
-                        } else if (selectedFile.equals(hcb)) {
-                            for (int i = 0; i < n; i++, index++) {
-                                System.out.println(HCBarray[index - 1]);
-                                if (index == 33)
+                        } else if (recordFileSelected.equals(hcb)) {
+                            for (int i = 0; i < n; i++, indexOfRecord++) {
+                                System.out.println(HCBarray[indexOfRecord - 1]);
+                                if (indexOfRecord == 37)
                                     throw new EOFException();
                             }
-                        } else if (selectedFile.equals(mtv)) {
-                            for (int i = 0; i < n; i++, index++) {
-                                System.out.println(MTVarray[index - 1]);
-                                if (index == 695)
+                        } else if (recordFileSelected.equals(mtv)) {
+                            for (int i = 0; i < n; i++, indexOfRecord++) {
+                                System.out.println(MTVarray[indexOfRecord - 1]);
+                                if (indexOfRecord == 687)
                                     throw new EOFException();
                             }
-                        } else if (selectedFile.equals(mrb)) {
-                            for (int i = 0; i < n; i++, index++) {
-                                System.out.println(MRBarray[index - 1]);
-                                if (index == 463)
+                        } else if (recordFileSelected.equals(mrb)) {
+                            for (int i = 0; i < n; i++, indexOfRecord++) {
+                                System.out.println(MRBarray[indexOfRecord - 1]);
+                                if (indexOfRecord == 506)
                                     throw new EOFException();
                             }
-                        } else if (selectedFile.equals(neb)) {
-                            for (int i = 0; i < n; i++, index++) {
-                                System.out.println(NEBarray[index - 1]);
-                                if (index == 49)
+                        } else if (recordFileSelected.equals(neb)) {
+                            for (int i = 0; i < n; i++, indexOfRecord++) {
+                                System.out.println(NEBarray[indexOfRecord - 1]);
+                                if (indexOfRecord == 54)
                                     throw new EOFException();
                             }
-                        } else if (selectedFile.equals(otr)) {
-                            for (int i = 0; i < n; i++, index++) {
-                                System.out.println(OTRarray[index - 1]);
-                                if (index == 7)
+                        } else if (recordFileSelected.equals(otr)) {
+                            for (int i = 0; i < n; i++, indexOfRecord++) {
+                                System.out.println(OTRarray[indexOfRecord - 1]);
+                                if (indexOfRecord == 8)
                                     throw new EOFException();
                             }
-                        } else if (selectedFile.equals(ssm)) {
-                            for (int i = 0; i < n; i++, index++) {
-                                System.out.println(SSMarray[index - 1]);
-                                if (index == 179)
+                        } else if (recordFileSelected.equals(ssm)) {
+                            for (int i = 0; i < n; i++, indexOfRecord++) {
+                                System.out.println(SSMarray[indexOfRecord - 1]);
+                                if (indexOfRecord == 168)
                                     throw new EOFException();
                             }
-                        } else if (selectedFile.equals(tpa)) {
-                            for (int i = 0; i < n; i++, index++) {
-                                System.out.println(TPAarray[index - 1]);
-                                if (index == 34)
+                        } else if (recordFileSelected.equals(tpa)) {
+                            for (int i = 0; i < n; i++, indexOfRecord++) {
+                                System.out.println(TPAarray[indexOfRecord - 1]);
+                                if (indexOfRecord == 37)
                                     throw new EOFException();
                             }
                         }
                     } catch (EOFException e) {
-                        System.out.println("Error: EOF has been reached.");
+                        System.out.println("Error has been found: EOF has been reached.");
                     }
 
                 } else if (n < 0) {
                     try {
-                        if (selectedFile.equals(ccb)) {
-                            for (int i = 0; i < (-n); i++, index--) {
-                                System.out.println(CCBarray[index - 1]);
+                        if (recordFileSelected.equals(ccb)) {
+                            for (int i = 0; i < (-n); i++, indexOfRecord--) {
+                                System.out.println(CCBarray[indexOfRecord - 1]);
                             }
-                        } else if (selectedFile.equals(hcb)) {
-                            for (int i = 0; i < (-n); i++, index--) {
-                                System.out.println(HCBarray[index - 1]);
+                        } else if (recordFileSelected.equals(hcb)) {
+                            for (int i = 0; i < (-n); i++, indexOfRecord--) {
+                                System.out.println(HCBarray[indexOfRecord - 1]);
                             }
-                        } else if (selectedFile.equals(mtv)) {
-                            for (int i = 0; i < (-n); i++, index--) {
-                                System.out.println(MTVarray[index - 1]);
+                        } else if (recordFileSelected.equals(mtv)) {
+                            for (int i = 0; i < (-n); i++, indexOfRecord--) {
+                                System.out.println(MTVarray[indexOfRecord - 1]);
                             }
-                        } else if (selectedFile.equals(mrb)) {
-                            for (int i = 0; i < (-n); i++, index--) {
-                                System.out.println(MRBarray[index - 1]);
+                        } else if (recordFileSelected.equals(mrb)) {
+                            for (int i = 0; i < (-n); i++, indexOfRecord--) {
+                                System.out.println(MRBarray[indexOfRecord - 1]);
                             }
-                        } else if (selectedFile.equals(neb)) {
-                            for (int i = 0; i < (-n); i++, index--) {
-                                System.out.println(NEBarray[index - 1]);
+                        } else if (recordFileSelected.equals(neb)) {
+                            for (int i = 0; i < (-n); i++, indexOfRecord--) {
+                                System.out.println(NEBarray[indexOfRecord - 1]);
                             }
-                        } else if (selectedFile.equals(otr)) {
-                            for (int i = 0; i < (-n); i++, index--) {
-                                System.out.println(OTRarray[index - 1]);
+                        } else if (recordFileSelected.equals(otr)) {
+                            for (int i = 0; i < (-n); i++, indexOfRecord--) {
+                                System.out.println(OTRarray[indexOfRecord - 1]);
                             }
-                        } else if (selectedFile.equals(ssm)) {
-                            for (int i = 0; i < (-n); i++, index--) {
-                                System.out.println(SSMarray[index - 1]);
+                        } else if (recordFileSelected.equals(ssm)) {
+                            for (int i = 0; i < (-n); i++, indexOfRecord--) {
+                                System.out.println(SSMarray[indexOfRecord - 1]);
                             }
-                        } else if (selectedFile.equals(tpa)) {
-                            for (int i = 0; i < (-n); i++, index--) {
-                                System.out.println(TPAarray[index - 1]);
+                        } else if (recordFileSelected.equals(tpa)) {
+                            for (int i = 0; i < (-n); i++, indexOfRecord--) {
+                                System.out.println(TPAarray[indexOfRecord - 1]);
                             }
                         }
                     } catch (ArrayIndexOutOfBoundsException e) {
-                        System.out.println("Error: BOF has been reached."); //if index exceeds the first element of the array, display the BOF message
+                        System.out.println("Error has been found: BOF has been reached."); //if indexOfRecord exceeds the first element of the array, display the BOF message
                     }
                 }
             }
@@ -971,7 +981,18 @@ public class SortingBooks {
         fileScanner.close();
     }
 
-    //Deserialization from binary file
+    /**
+     * Deserializes an array of Book objects from a binary file.
+     *
+     * This method reads a binary file containing serialized Book objects, creates an array of the
+     * appropriate size, and populates it with the deserialized Book objects.
+     * The first integer in the file indicates the number of Book objects, which is used to initialize
+     * the array. Each subsequent object in the file is read and stored in the array.
+     *
+     * @param fileName the name of the file from which the Book objects will be deserialized
+     * @return an array of Book objects read from the file
+     * @throws IOException if an I/O error occurs during file reading or deserialization
+     */
     public static Book[] deserialize(String fileName) throws IOException {
         File file = new File(fileName);
         FileInputStream fis = new FileInputStream(file);
@@ -988,7 +1009,7 @@ public class SortingBooks {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (EOFException eofe) {
-                System.out.println("End of file reached");
+                System.out.println("The end of the file has been reached");
                 break;
             }
         }
@@ -998,7 +1019,14 @@ public class SortingBooks {
         return array;
     }
 
-    // Removes empty cells from Book array
+    /**
+     * Removes empty (null) cells from an array of Book objects.
+     * This method creates a new array containing only the non-null elements of the input array,
+     * preserving the original order of the elements.
+     *
+     * @param array the array of Book objects, possibly containing null elements
+     * @return a new Book array with all null elements removed
+     */
     public static Book[] removeEmptyCells(Book[] array) {
         int count = 0;
         for (Book value : array) {

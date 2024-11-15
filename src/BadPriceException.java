@@ -1,33 +1,30 @@
 //-----------------------------------------------------
 //Assignment 3
-//Written by: Sonali Patel - 40176580
+//Written by: Ayush Patel (40285846) and Krishna Patel (40200870)
 //-----------------------------------------------------
 
-/* Name and ID: Sonali Patel - 40176580
- * COMP249 Assignment #3
- * Due Date: 37/03/2023
- */
-
 /**
- * The BadPriceException class is an Exception subclass that represents an invalid price value.
- * It can be thrown when a price value is not properly formatted or does not meet certain validation criteria.
+ * The BadPriceException class is a subclass of Exception that signifies an invalid price value.
+ * It may be thrown when a price value is incorrectly formatted or fails to meet specific validation standards.
  */
 
 public class BadPriceException extends Exception{
     /**
-     * Constructs a new BadPriceException with the specified detail message.
-     * @param message the detail message. This message is used to describe the cause of the exception.
-     */
-    public BadPriceException(String message) {
+    * Creates a new BadPriceException with the provided detail message.
+    * @param message the detail message, which explains the reason for the exception.
+    */
+
+public BadPriceException(String message) {
 
         super(message);
 
     }
 
     /**
-     * Constructs a new BadPriceException with a default detail message.
-     * The default message is "This record's price is invalid."
+     * Creates a new BadPriceException with a default detail message.
+     * The default message is "The price in this record is invalid."
      */
+
     public BadPriceException() {
 
         super("This record's price is invalid.");
